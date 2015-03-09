@@ -1,6 +1,6 @@
 # lets read in the data
 ActivityData<-read.csv("./activity.csv", stringsAsFactors=F)
-# no load the ggplot2 library
+# now load the ggplot2 library
 require(ggplot2)
 #create a count plot by day that becomes a data based histogram by summing each day's steps
 qplot(date,steps, data=ActivityData, stat="summary", fun.y="sum", geom="bar")
@@ -11,6 +11,8 @@ StepsMean<-mean(StepsSummed$steps)
 StepsMedian<-median(StepsSummed$steps)
 StepsData<-cbind(StepsMean,StepsMedian)
 print(StepsData)
+StepsMax<-StepsSummed[which.max(StepsSummed$steps),2]
+print(StepsMax)
 # now lets aveage the steps by time interval by day (acepting defaults means NA is ignored)
 qplot(interval,steps, data=ActivityData, stat="summary", fun.y="mean", geom="bar")
 # not create the data frame of averaged values to report on and use later in imputing
