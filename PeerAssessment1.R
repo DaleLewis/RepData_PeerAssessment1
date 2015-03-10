@@ -3,7 +3,7 @@ ActivityData<-read.csv("./activity.csv", stringsAsFactors=F)
 # now load the ggplot2 library
 require(ggplot2)
 #create a count plot by day that becomes a data based histogram by summing each day's steps
-qplot(date,steps, data=ActivityData, stat="summary", fun.y="sum", geom="bar",xlab="Date",ylab="Steps")
+qplot(date,steps, data=ActivityData, stat="summary", fun.y="sum", geom="bar")
 # now create a data fram by using aggregate to sum again by day
 StepsSummed<-aggregate(steps~date,data=ActivityData,sum)
 # lets determine the mean and median, then print them
@@ -14,7 +14,7 @@ print(StepsData)
 StepsMax<-StepsSummed[which.max(StepsSummed$steps),2]
 print(StepsMax)
 # now lets aveage the steps by time interval by day (acepting defaults means NA is ignored)
-qplot(interval,steps, data=ActivityData, stat="summary", fun.y="mean", geom="bar",xlab="Time of Day",ylab="Steps")
+qplot(interval,steps, data=ActivityData, stat="summary", fun.y="mean", geom="bar")
 # not create the data frame of averaged values to report on and use later in imputing
 StepsAveraged<-aggregate(steps~interval,data=ActivityData,mean)
 # now find the time period that has the max by using which.max to find the right row in our data frame we created above
@@ -31,17 +31,14 @@ for (i in 1:nrow(ActivityDataImpute)){
 }
 # now repeat the steps above that create the summary histogram and perform the calculations to determine and then print the mean and median values
 require(ggplot2)
-qplot(date,steps, data=ActivityDataImpute, stat="summary", fun.y="sum", geom="bar",xlab="Date",ylab="Steps")
+qplot(date,steps, data=ActivityDataImpute, stat="summary", fun.y="sum", geom="bar")
 StepsSummedImpute<-aggregate(steps~date,data=ActivityDataImpute,sum)
 StepsMeanImpute<-mean(StepsSummedImpute$steps)
 StepsMedianImpute<-median(StepsSummedImpute$steps)
 StepsDataImpute<-cbind(StepsMeanImpute,StepsMedianImpute)
 print(StepsDataImpute)
-# now pad the interval characters to enable their converstion to time
-require(stringi)
-ActivityDataImpute$intervalplot<-stri_pad_left(as.character(ActivityDataImpute$interval),4,pad="0")
-# now convert this padded character column to time series for plotting
-ActivityDataImpute$intervalplot<-as.ts(ActivityDataImpute$intervalplot)
+# now convert the interval character column to time series for plotting
+ActivityDataImpute$intervalplot<-as.ts(ActivityDataImpute$interval)
 #find the day of the week for each date
 ActivityDataImpute$weekday<-weekdays(strptime(ActivityDataImpute$date,"%Y-%m-%d"))
 # create an empty column
