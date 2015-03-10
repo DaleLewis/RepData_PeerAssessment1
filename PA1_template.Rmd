@@ -88,8 +88,12 @@ As can be seen from these values of the mean and median are not significantly ch
 To determine if there are differences between weekday and weekend patterns a time plot is produced using and indicator of weekday or weekend for the date and time of day for the x axis. To ready the data for this plot the interval column values are converted to a time series object for ploting and stored in a new columne labeled intervalplot. The weekday name of the date is generated using the weekdays function operating on the date character column that is converted to a POSIX object using the r function strptime. These values are stored in a new column labled weekday. A new column labled weekdayfactor is created empty with all NA values stored in it. This column is populated with the 1 if the weekday name matches the list of weekend day names and by a 0 otherwise. This column is converted to a factor variable using the factor function and given the two levels of Weekday and Weekend. Finally the ggplot2 package is used to plot the average by time of day of the steps taken with plots for the weekdays and the weekend days.
 
 ```{r}
-# now convert Interval to time series variable
-ActivityDataImpute$intervalplot<-as.ts(ActivityDataImpute$interval)
+# now pad the interval characters to enable their converstion to time
+require(stringi)
+ActivityDataImpute$intervalplot<-stri_pad_left(as.character(ActivityDataImpute$interval),4,pad="0")
+# now convert this padded character column to date/time and then format as time only
+ActivityDataImpute$intervalplot<-strptime(ActivityDataImpute$intervalplot,format="%H%M")
+ActivityDataImpute$intervalplot<-format(ActivityDataImpute$intervalplot,"%T")
 #find the day of the week for each date
 ActivityDataImpute$weekday<-weekdays(strptime(ActivityDataImpute$date,"%Y-%m-%d"))
 # create an empty column

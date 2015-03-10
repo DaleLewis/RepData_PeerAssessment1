@@ -37,8 +37,11 @@ StepsMeanImpute<-mean(StepsSummedImpute$steps)
 StepsMedianImpute<-median(StepsSummedImpute$steps)
 StepsDataImpute<-cbind(StepsMeanImpute,StepsMedianImpute)
 print(StepsDataImpute)
-# now convert Interval to time series variable
-ActivityDataImpute$intervalplot<-as.ts(ActivityDataImpute$interval)
+# now pad the interval characters to enable their converstion to time
+require(stringi)
+ActivityDataImpute$intervalplot<-stri_pad_left(as.character(ActivityDataImpute$interval),4,pad="0")
+# now convert this padded character column to time series for plotting
+ActivityDataImpute$intervalplot<-as.ts(ActivityDataImpute$intervalplot)
 #find the day of the week for each date
 ActivityDataImpute$weekday<-weekdays(strptime(ActivityDataImpute$date,"%Y-%m-%d"))
 # create an empty column

@@ -139,8 +139,19 @@ To determine if there are differences between weekday and weekend patterns a tim
 
 
 ```r
-# now convert Interval to time series variable
-ActivityDataImpute$intervalplot<-as.ts(ActivityDataImpute$interval)
+# now pad the interval characters to enable their converstion to time
+require(stringi)
+```
+
+```
+## Loading required package: stringi
+```
+
+```r
+ActivityDataImpute$intervalplot<-stri_pad_left(as.character(ActivityDataImpute$interval),4,pad="0")
+# now convert this padded character column to date/time and then format as time only
+ActivityDataImpute$intervalplot<-strptime(ActivityDataImpute$intervalplot,format="%H%M")
+ActivityDataImpute$intervalplot<-format(ActivityDataImpute$intervalplot,"%T")
 #find the day of the week for each date
 ActivityDataImpute$weekday<-weekdays(strptime(ActivityDataImpute$date,"%Y-%m-%d"))
 # create an empty column
@@ -158,6 +169,11 @@ for (i in 1:nrow(ActivityDataImpute)){
 ActivityDataImpute$weekdayfactor<- factor(ActivityDataImpute$weekdayfactor, labels = c("Weekday", "Weekend"))
 #create a plot using ggplot2 qplot function and use facets for weekday and weekend
 qplot(intervalplot,steps, data=ActivityDataImpute, stat="summary", fun.y="mean", geom="line",facets=weekdayfactor~.,xlab="Time of Day",ylab="Steps")
+```
+
+```
+## geom_path: Each group consist of only one observation. Do you need to adjust the group aesthetic?
+## geom_path: Each group consist of only one observation. Do you need to adjust the group aesthetic?
 ```
 
 ![](PA1_template_files/figure-html/unnamed-chunk-5-1.png) 
